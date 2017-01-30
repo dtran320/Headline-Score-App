@@ -1,0 +1,28 @@
+     .chart-gauge
+      {
+        width: 400px;
+        margin: 10px auto  
+       } 
+       .suggestions-list
+      {
+        width: 400px;
+        margin: 0px auto  
+       } 
+      .chart-filled
+      {
+        fill: steelblue;
+      }
+      .chart-empty
+      {
+        fill: #dedede;
+      }
+    
+      .needle, .needle-center
+      {
+        fill: #464A4F;
+      }
+
+      svg {
+        font: 20px sans-serif;
+        fill: #464A4F;
+      }

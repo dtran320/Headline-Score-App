@@ -1,34 +1,40 @@
+{% include "top.html" %}
 
-{% block content %}
-    <!-- Intro Section -->
-    <section id="intro" class="intro-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                   
-                    <div class="row">
-                        <br><br>
+   
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Marketing Icons Section -->
+        <div class="row">
+            <div class="col-lg-12">
+                <br><br>
                         <center>
 
                             <h1> What's your headline? </h1>
                                 <form action="{{ url_for('search') }}" method="post">
-                                <input type="text" name="search_input" placeholder='Enter your Headline' size="50"><input type="submit" value="Submit">
+                                <input type="text" style="font-size:20px" name="search_input" placeholder='Enter your Headline' size="50"><br><br><input type="submit" value="Submit" class="btn btn-primary">
     
                                 </form>
                         </center>
-                        <div class="col-md-3">
-                        </div>
-                        <div class="col-md-6">
-                            
-                        </div>
-                        <div class="col-md-3">
-                        </div>
-                   </div>
-                </div>
             </div>
+            
         </div>
-    </section>
+        <!-- /.row -->
 
+     
 
+    </div>
+    <!-- /.container -->
 
-{% endblock %}
+    <!-- jQuery -->
+    <script src="static/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="static/js/bootstrap.min.js"></script>
+
+   
+
+</body>
+
+</html>

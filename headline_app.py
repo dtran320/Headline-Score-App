@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask import render_template
 from random import randint
+from helpers import *
 
 VERSION = '0.0.1'
 app = Flask(__name__)
@@ -23,10 +24,13 @@ def search():
 
 @app.route('/search_results/<query>')
 def search_results(query):
-  #db.posts.find( {$text: {$search :"Third"}})
-  
-  
-  return render_template("results.html", query=query)
+  subject_array = make_array(query)
+  score = get_score(subject_array)
+  msgs = get_messages(subject_array)
+  sym = contains_symbol_separators(query)
+  output = {'symbols': sym}  
+  return render_template("results.html", results=score, query=query, output=output, score=score, msgs=msgs)
+
 
 
 
