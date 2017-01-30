@@ -5,7 +5,7 @@ import numpy as np
 import nltk
 
 def get_score(ar):
-  
+  nltk.data.path.append('./nltk_data/')
   score = predict_score(ar)
   return score
 
