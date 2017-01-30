@@ -1,0 +1,1 @@
+web: gunicorn headline_app:app
