@@ -7,7 +7,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     height, padRad, percToDeg, percToRad, chart_sl,
     percent, radius, sectionIndx, svg_cg, cg, totalPercent, width, svg_sl, sl;
 
-  percent = .65;
+  percent = .0;
  
   sectionPerc = 1 / 2;
   padRad = 0.025;
@@ -148,7 +148,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
       .transition()
         .ease("quad-out")
         .duration(500)
-        .attr("height", 35)
+        .attr("height", 38)
         .delay(function(d,i) { 
           console.log("D|i: "+i+" "+d);
           return (i+5)*500;
@@ -233,10 +233,13 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
   needle = new Needle(chart_cg);
   needle.render();
   needle.moveTo(percent);
+  
 
+  sl = d3.select('.suggestions-list');
+  width_sl = sl[0][0].offsetWidth; 
 
   // Create SVG element
-  svg_sl = sl.append('svg').attr('width', width).attr('height', height);
+  svg_sl = sl.append('svg').attr('width', width_sl).attr('height', height);
   // Add layer for the panel
   chart_sl = svg_sl.append('g');
   

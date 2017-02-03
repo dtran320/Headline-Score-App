@@ -40,7 +40,7 @@ def predict_score(subject_array):
     loaded_model = pickle.load(open(filename, 'rb'))
     prob = loaded_model.predict_proba(subject_array)
     score = prob[0][1]
-    a= str(np.round(score,1))
+    a= str(np.round(score,2))
   return a
 #  return ("{0:.2f}".format(a))
 
