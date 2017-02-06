@@ -489,6 +489,6 @@ def get_messages(engfeats_arr):
         msg.append("• Include percentage values")    
     if(engfeats_arr[15] == 1):
         msg.append("• Do not make all words capitalized ")
-    
+     
     return msg
 
