@@ -24,12 +24,13 @@
         <!-- /.row -->
 
      
-
+{{results}}
+{{msgs|tojson}}
     </div>
     <!-- /.container -->
     <script src="/static/js/headline_results.js"></script>
      <script type="text/javascript">
-        needle.moveTo({{results}});
+        needle.moveTo({{results}}); 
         suggestions.showList({{msgs|tojson}});
       </script>
    
