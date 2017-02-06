@@ -9,6 +9,7 @@ from sklearn.externals import joblib
 from nltk.tag import StanfordPOSTagger
 from nltk import word_tokenize
 import pandas as pd
+nltk.data.path.append('./nltk_data/')
 
 #Check the results of tests
 def test_results(fcn_name, tests):
@@ -301,7 +302,7 @@ def extra_clean_subject( raw_subject ):
     # Function to convert a raw subject to a string of words
     # The input is a single string (a raw pitch subject), and 
     # the output is a single string (a preprocessed pitch subject)
-  
+    
     #Remove any numbers or letters in combination with numbers
     subject = ' '.join(s for s in raw_subject.split() if not any(c.isdigit() for c in s))
 
