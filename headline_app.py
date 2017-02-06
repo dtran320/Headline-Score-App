@@ -25,12 +25,14 @@ def search():
 
 @app.route('/search_results/<query>')
 def search_results(query):
-  score = predict_proba_boaav_eng(query)
-
+  score, engfeats = predict_proba_boaav_eng(query)
+  print(engfeats.values[0])
+  msgs = get_messages(engfeats.values[0])
+  print("Messages:",msgs)
   subject_array = ""
   print("Score: ",score)
   
-  msgs = ""
+ 
   sym = ""
   output = {'symbols': sym}  
   return render_template("results.html", results=score, query=query, output=output, score=score, msgs=msgs)

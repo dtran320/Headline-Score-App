@@ -9,6 +9,8 @@ from sklearn.externals import joblib
 from nltk.tag import StanfordPOSTagger
 from nltk import word_tokenize
 import pandas as pd
+
+
 nltk.data.path.append('./nltk_data/')
 
 #Check the results of tests
@@ -280,10 +282,13 @@ def clean_subject( raw_subject ):
 
 
 def return_aavs(raw_subject):
-    jar = 'stanford-postagger-2014-08-27/stanford-postagger.jar'
-    model = 'stanford-postagger-2014-08-27/models/english-left3words-distsim.tagger'
-    #jar = 'stanford-postagger-2016-10-31/stanford-postagger.jar'
-    #model = 'stanford-postagger-2016-10-31/models/english-left3words-distsim.tagger'
+    #jar = 'stanford-postagger-2014-08-27/stanford-postagger.jar'
+    #model = 'stanford-postagger-2014-08-27/models/english-left3words-distsim.tagger'
+    
+    #Added this to the heroku buildpack to update java to 1.8
+    #heroku buildpacks:set https://github.com/heroku/heroku-buildpack-jvm-common.git
+    jar = 'stanford-postagger-2016-10-31/stanford-postagger.jar'
+    model = 'stanford-postagger-2016-10-31/models/english-left3words-distsim.tagger'
     pos_tagger = StanfordPOSTagger(model, jar, encoding='utf8')
 
     sents = []
@@ -398,6 +403,8 @@ def get_eng_feats_df(raw_subject):
     del engfeats_df['subject']
     return engfeats_df
 
+
+
 def predict_boaav_eng(raw_subject):
     
     aavs = return_aavs(raw_subject)
@@ -428,7 +435,8 @@ def predict_proba_boaav_eng(raw_subject):
     engfeats_df = get_eng_feats_df(raw_subject)
     
     df_combined_feats = pd.concat([engfeats_df, boaav_df], axis=1)
-    return comb_model.predict_proba(df_combined_feats)[0][1]
+    score = comb_model.predict_proba(df_combined_feats)[0][1]
+    return score, engfeats_df
 
 def get_score_str(predicted_probability_double):
     #p = predict_proba_boaav_eng(raw_subject)[0][1]*100
@@ -436,4 +444,51 @@ def get_score_str(predicted_probability_double):
     return '{0:.{1}f}'.format(p, 1)
 
 
+
+
+#0 cont_currency          2.015749
+#1 cont_sym_separators    1.509125
+#2 cont_question_mark     0.147614
+#3 cont_quotes           -9.103116
+#4 cont_weird_symbols    -2.161241
+#5 num_words             -0.029475
+#6 longest_word_length   -0.181915
+#7 cont_dotcom           -1.380004
+#8 cont_percentile        0.346172
+#9 cont_time              0.202314
+#10 cont_ranking          -1.382012
+#11 num_articles           0.000000
+#12 num_advjs              1.285648
+#13 num_comps_supers       1.628176
+#14 num_acronyms          -0.195049
+#15 is_all_caps           -0.197197
+#16 starts_with_5WH        2.462860
+def get_messages(engfeats_arr):
+    msg = []
+    if(engfeats_arr[3] == 1):
+        msg.append("• Remove the quotations ")
+    if(engfeats_arr[16] == 0):
+        msg.append("• Begin with Who/What/Where/When/Why/How ")
+    if(engfeats_arr[0] == 0):
+        msg.append("• include monetary values ($)")
+    if(engfeats_arr[4] == 1):
+        msg.append("• Remove copyright or trademark symbols ")
+    if(engfeats_arr[1] == 0):
+        msg.append("• Include parentheses, dashes, or ellipses ")
+    if(engfeats_arr[12] == 0):
+        msg.append("• Use more adjectives or adverbs ")
+    if(engfeats_arr[13] == 0):
+        msg.append("• Use more superlatives ")
+    if(engfeats_arr[3] == 1):
+        msg.append("• Remove the quotations ")
+    if(engfeats_arr[7] == 1):
+        msg.append("• Remove '.com' information ")
+    if(engfeats_arr[10] == 1):
+        msg.append("• Remove ranking information")
+    if(engfeats_arr[8] == 0):
+        msg.append("• Include percentage values")    
+    if(engfeats_arr[15] == 1):
+        msg.append("• Do not make all words capitalized ")
+    
+    return msg
 

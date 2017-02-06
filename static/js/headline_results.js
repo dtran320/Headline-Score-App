@@ -28,6 +28,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
   console.log(barWidth+69);
 
 
+
   /*
     Utility methods 
   */
@@ -58,8 +59,8 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     
 
   scoreText = chart_cg.append('text')
-    .attr("x", -110) 
-    .attr("y", 70)
+    .attr("x", -120) 
+    .attr("y", 55)
     .style("font-size", "40px");
 
   
@@ -86,7 +87,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     scoreText
     .transition().duration(1)
     .style("opacity", 1)
-    .text('Score: '+Math.round(100*perc)+'%');
+    .text('Score: '+(100*perc).toFixed(1)+'%');
   }
 
   var Suggestions = (function(){
@@ -237,9 +238,9 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
 
   sl = d3.select('.suggestions-list');
   width_sl = sl[0][0].offsetWidth; 
-
+  height_sl = sl[0][0].offsetHeight;
   // Create SVG element
-  svg_sl = sl.append('svg').attr('width', width_sl).attr('height', height);
+  svg_sl = sl.append('svg').attr('width', width_sl).attr('height', height_sl);
   // Add layer for the panel
   chart_sl = svg_sl.append('g');
   

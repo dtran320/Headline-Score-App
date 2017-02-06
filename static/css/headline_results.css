@@ -7,6 +7,7 @@
        .suggestions-list
       {
         width: 400px;
+        height: 400px;
         margin: 0px auto  
        } 
       .chart-filled
@@ -24,6 +25,6 @@
       }
 
       svg {
-        font: 20px sans-serif;
+        font: 18px sans-serif;
         fill: #464A4F;
       }
