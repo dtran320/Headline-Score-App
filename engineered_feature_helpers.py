@@ -279,9 +279,10 @@ def clean_subject( raw_subject ):
 
 
 def return_aavs(raw_subject):
-    
-    jar = 'stanford-postagger-2016-10-31/stanford-postagger.jar'
-    model = 'stanford-postagger-2016-10-31/models/english-left3words-distsim.tagger'
+    jar = 'stanford-postagger-2014-08-27/stanford-postagger.jar'
+    model = 'stanford-postagger-2014-08-27/models/english-left3words-distsim.tagger'
+    #jar = 'stanford-postagger-2016-10-31/stanford-postagger.jar'
+    #model = 'stanford-postagger-2016-10-31/models/english-left3words-distsim.tagger'
     pos_tagger = StanfordPOSTagger(model, jar, encoding='utf8')
 
     sents = []
