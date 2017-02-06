@@ -446,6 +446,41 @@ def get_score_str(predicted_probability_double):
 
 
 
+
+
+
+def get_words_to_remove(subject):
+    remove_words = ['date', 'productive','emphasizes','reliable', 'promising',
+                'coach','meeting','healthy','proudly','significant','innovative',
+                'sustainable','enjoys','affordable','estimated','recognizes', 
+                'maintains','published','honored','participate','offered',      
+                'thrive','stand','charitable','outstanding','supporting',   
+                'enhance','effective','rapidly','flexible','saving','recent',       
+                'stress','worth','host','schedule' ,'serf' ,'special',      
+                'electrical','endorses','achieves' ,'training','renowned',   
+                'unique','attends','absolute','released','provides','featured',
+                'likely','clean','process','local','global','newly','simplifies',
+                'exciting','celebrates','certified','minimizing','qualified','anticipates',
+                'relentless','complete','award','senior','profit','beautiful',
+                'successfully','celebrating','recently','providing','customized',
+                'higher','pack','pure','creative','fresh','thrives','awarded',
+                'recognized','donates','important','reach','achieve','participates',
+                'offering','true','book','publishes','fully','multiple','present','triple',
+                'forward','prioritizes','named','living','strengthens','complimentary',
+                'direct','current','receive','trusted','attend','ever','late','prestigious',
+                'grow','approved','empower','finish','rental','remains','away',
+                'receives','instead','best','additional','ensure','lower','high',
+                'limitless','introduce'
+               ]
+    query = subject.lower()               
+    msg = []
+    for word in remove_words:
+        if word in query:
+            message = "• Consider replacing the word '"+word+"'"
+            msg.append(message)
+    return msg 
+   
+
 #0 cont_currency          2.015749
 #1 cont_sym_separators    1.509125
 #2 cont_question_mark     0.147614
