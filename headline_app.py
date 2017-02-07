@@ -5,6 +5,7 @@ from random import randint
 #from helpers import *
 from engineered_feature_helpers import *
 
+
 VERSION = '0.0.1'
 app = Flask(__name__)
 app.config.from_object('config')
@@ -25,19 +26,17 @@ def search():
 
 @app.route('/search_results/<query>')
 def search_results(query):
-  score, engfeats = predict_proba_boaav_eng(query)
-  print(engfeats.values[0])
+  score, engfeats, aavs = predict_proba_boaav_eng(query)
   msgs_eng_feats = get_messages(engfeats.values[0])
  
   subject_array = ""
-  print("Score: ",score)
   msgs_remove_words = get_words_to_remove(query)
- 
-  msgs= msgs_eng_feats + msgs_remove_words
+  
+  msgs= msgs_remove_words + msgs_eng_feats 
+  #msgs= msgs_replace_words + msgs_remove_words + msgs_eng_feats 
   sym = ""
   output = {'symbols': sym}  
   return render_template("results.html", results=score, query=query, output=output, score=score, msgs=msgs)
-
 
 
 

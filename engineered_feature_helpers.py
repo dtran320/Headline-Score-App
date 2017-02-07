@@ -436,14 +436,12 @@ def predict_proba_boaav_eng(raw_subject):
     
     df_combined_feats = pd.concat([engfeats_df, boaav_df], axis=1)
     score = comb_model.predict_proba(df_combined_feats)[0][1]
-    return score, engfeats_df
+    return score, engfeats_df, aavs
 
 def get_score_str(predicted_probability_double):
     #p = predict_proba_boaav_eng(raw_subject)[0][1]*100
     p = predicted_probability_double*100
     return '{0:.{1}f}'.format(p, 1)
-
-
 
 
 
@@ -470,7 +468,12 @@ def get_words_to_remove(subject):
                 'direct','current','receive','trusted','attend','ever','late','prestigious',
                 'grow','approved','empower','finish','rental','remains','away',
                 'receives','instead','best','additional','ensure','lower','high',
-                'limitless','introduce'
+                'limitless','introduce','efficient','inspired','large','eliminate',
+                'enhances','spending','enjoy','emerges','traditional','set','little',
+                'increasing','print','prepares','protect','private','earns','shape',
+                'successful','rising','alternative','listed','highly','breaking','giving',
+                'quarterly','active','influential','offer','shipping','donate','introducing',
+                'completely','poised'
                ]
     query = subject.lower()               
     msg = []
@@ -479,7 +482,36 @@ def get_words_to_remove(subject):
             message = "• Consider replacing the word '"+word+"'"
             msg.append(message)
     return msg 
-   
+
+
+def get_words_to_replace(aavs):
+    msgs = []
+    for word in aavs.split(" "):
+        if len(word) > 0:
+
+            replace_word = ""
+            if word in 'change, commute, shift, convert, modify, exchange, transfer, alteration, alter, variety, interchange, vary, deepen, switch':
+                replace_word = "change"
+            if word in 'design, contrive':
+                replace_word = "plan"
+            if word in 'stop, stymy, stop, parry, jam, deflect, freeze, immobilise, halt, occlusion, obturate, impede, immobilize, barricade, hinder, bar, occlude':
+                replace_word = "block"
+            if word in 'disclose, unveil, expose, divulge, break, unwrap, reveal, discover, uncover':
+                replace_word = 'reveal'    
+            if word in 'rise, mature, produce, maturate, uprise, farm, originate, develop, acquire, raise, turn, arise':
+                replace_word = 'grew'   
+            if word in 'strike, decrease, diminish, drop, lessen':
+                replace_word = 'fell'
+            if word in 'beginning, origin, author, reference, reservoir, root, informant, seed, rootage':
+                replace_word = 'source'
+            if word in 'withdraw, take, hit, bump':
+                replace_word = 'removing'
+            if len(replace_word) > 0:
+                message = "• Consider replacing the word '"+word+"' with the word '"+replace_word+"'"
+                msgs.append(message)
+                 
+    return msgs
+
 
 #0 cont_currency          2.015749
 #1 cont_sym_separators    1.509125
@@ -503,9 +535,9 @@ def get_messages(engfeats_arr):
     if(engfeats_arr[3] == 1):
         msg.append("• Remove the quotations ")
     if(engfeats_arr[16] == 0):
-        msg.append("• Begin with Who/What/Where/When/Why/How ")
+        msg.append("• Begin with Who, What, Where, When, Why, or How ")
     if(engfeats_arr[0] == 0):
-        msg.append("• include monetary values ($)")
+        msg.append("• Include monetary values ($)")
     if(engfeats_arr[4] == 1):
         msg.append("• Remove copyright or trademark symbols ")
     if(engfeats_arr[1] == 0):

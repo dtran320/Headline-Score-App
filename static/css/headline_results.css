@@ -6,7 +6,7 @@
        } 
        .suggestions-list
       {
-        width: 400px;
+        width: 600px;
         height: 400px;
         margin: 0px auto  
        } 
@@ -25,6 +25,6 @@
       }
 
       svg {
-        font: 18px sans-serif;
+        font: 22px sans-serif;
         fill: #464A4F;
       }
