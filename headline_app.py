@@ -21,7 +21,7 @@ def index():
 
 @app.route('/search', methods=['POST'])
 def search():
-  query = request.form['search_input']
+  query = request.form['search_input'].replace('\n', ' ')
   return redirect(url_for('search_results', query=query))
 
 @app.route('/search_results/<query>')
@@ -40,8 +40,8 @@ def search_results(query):
 
 
 
-@app.route('/index2')
-def index2():
+@app.route('/empty')
+def empty():
     return render_template("index2.html",
                            title='Home')
 
