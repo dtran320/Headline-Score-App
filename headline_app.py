@@ -96,6 +96,13 @@ def search3():
 # This route will show a form to perform an AJAX request
 # jQuery is loaded to execute the request and update the
 # value of the operation
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+# This route will show a form to perform an AJAX request
+# jQuery is loaded to execute the request and update the
+# value of the operation
 @app.route('/ajax')
 def ajax():
     return render_template('ajax.html')
