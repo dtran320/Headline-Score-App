@@ -104,14 +104,14 @@
 }
 .sidebar-nav > .sidebar-brand li a:active,
 .sidebar-nav > .sidebar-brand li a:focus {
-  color: #fff;
+  color: #ffb917;
   background: none;
   text-decoration: none;
 }
 
 .sidebar-nav > .sidebar-brand li a.hover,
 .sidebar-nav > .sidebar-brand li a:active {
-  color: #fff;
+  color: #ffb917;
   background: none;
   text-decoration: none;
 }
