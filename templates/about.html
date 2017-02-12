@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Optimizing Media Pitch Headlines with Machine Learning</title>
+  <title>Story Pitch Perfect: Optimizing Media Pitch Headlines with Machine Learning</title>
   <base target="_self">
   <meta name="description" content="" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="static/css/projects.css" />
 
 </head>
-<body >
+<body data-spy="scroll" data-target="#spy">
 
     <div id="wrapper">
 
@@ -26,7 +26,7 @@
 
                     <li class="sidebar-brand" style="margin-bottom:40px">
                         
-                        Score My Media Headline!
+                        Story Pitch Perfect: Optimizing Story Pitch Headlines with Machine Learning
                     </li> 
                     <li class="sidebar-nav author" >
                     <a href="http://www.jon-tang.com"><img src="/static/img/JonTang.png" width="40px" height="40px"> Jon Tang</a>
@@ -35,28 +35,40 @@
                     
                     <hr>
                     <li>
-                        <a href="#intro" data-scroll>
+                        <a href="#home" data-scroll>
                           Introduction
                      </a>
                  </li>
                  <li>
                     <a href="#sign" data-scroll>
-                        Why are Media Pitches Important? 
+                       The Problem 
+                    </a>
+                </li>
+                 <li>
+                    <a href="#data" data-scroll>
+                         Data Acquisition</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="#mod1" data-scroll>
+                        An Initial Model 
+                    </a>
+                </li>
+                 <li>
+                    <a href="#mod2" data-scroll>
+                        A More Useful Model 
                     </a>
                 </li>
                 <li>
-                    <a href="#soln" data-scroll>
-                        Solution
+                    <a href="#app" data-scroll>
+                        The Web App
                     </a>
                 </li>
-                <li>
-                    <a href="#demo" data-scroll>
-                        Demo
-                    </a>
-                </li>
+               
                 <li>
                     <a href="#summ" data-scroll>
-                        Summary
+                        Conclusions
                     </a>
                 </li>
                 <li>
@@ -64,6 +76,7 @@
                         Related Links
                     </a>
                 </li>
+                
             </ol>
         </nav>
     </div>
@@ -71,12 +84,12 @@
     <!-- Page content -->
     <div id="page-content-wrapper" >
 
-        <div class="page-content inset" data-spy="scroll" data-target="#spy">
+        <div class="page-content inset" >
             <div class="row" id="home">
 
                 <div class="text-center" >
-                    <h2 id="intro">Score My Headline!</h2><h3> Optimizing Media Pitch Headlines with Machine Learning</h3> 
-Consulting Project for Insight Data Science 2017
+                    <img id="intro" src="/static/img/FlashImage_orange.gif" width="80%">
+                    <br>
                     <span class="glyphicon glyphicon-time"></span> Posted Feb 7, 2017
                     <br><br>
                     
@@ -89,40 +102,128 @@ Consulting Project for Insight Data Science 2017
             <div class="row">
                 <div class="col-md-12">
                     <h3>Introduction</h3>
-                    During my fellowship at Insight Data Science I took on a three week consulting project for PRX, a public relations startup. Prior to Insight I was working at a biotech startup working on automating a blood test to help doctors better personalize cancer prevention and treatment options. In parallel, I was doing a computational biology postdoc at the Lawrence Berkeley Lab, using bioinformatics tools and computational models to study the biological effects of different types of ionizing radiation.  This was my first foray into natural language processing (NLP), which turned out to be a blast!
+                    During my fellowship at Insight Data Science I took on a three week consulting project for PRX, a startup that wants to make public relations (PR) easier for other startups and small businesses.  Prior to Insight, I was working at a biotech startup focused on cancer prevention and therapy. Like most early stage startups, we couldn't afford a PR firm and had to bootstrap to get press coverage.  When I heard that PRX was trying to democratize access to PR companies by fixing the costly and inefficient information exchange between companies with stories and journalists, I was really excited to help.
                     <br><br><br>
                 </div>
                 <div class="col-md-12">
-                    <h3 id="sign"></h3>
-                    PRX is a startup that wants to make public relations easy and more transparent for their customers. 
+                    <h3 id="sign">The Problem</h3>
+                    One of the services that PR firms provide for their clients is helping them get publicity when they have news to publicize.  A PR firm can help craft a media story and pitch them to journalists as potential ideas to write about. The problem is that there's a very low success rate for getting a journalist to engage with a story pitch because they receive so many of them.  For this project with PRX, I wanted to see if I could leverage data and machine learning to optimize their headlines for better engagement with journalists.  I decided to look specifically at headlines because headlines are the first thing that journalists see. If the headline is not compelling or interesting enough, they might not even read the rest of the pitch. 
+                    <br><br>
+                    PRX asked for two deliverables: (1) A classifier model that could predict with 88% accuracy if a headline is "engaging", and (2) a web app for PRX to get scores for a given headlines and tailored feedback for improving the score.  
                     <br><br><br>
                 </div>
                 <div class="col-md-12">
-                    <h3 id="soln">Solution</h3>
+                    <h3 id="data">Data Acquisition</h3>
+                    I first collected data by scraping two different media sources.  I acquired 22K news headlines from the business section of Newswire, and 22K headlines from VentureBeat.  It's worth noting that the median social number of social media shares for Newswire headlines is 2, indicating that they are not very effective headlines. In contrast VentureBeat articles have a median number of social media shares of 195.  While there are many good media sites that I could have used as a source for good headlines, I specifically chose VentureBeat because they are a popular site for news related to startups, and PRX's clients are all startups.  Additionally, VentureBeat journalists have been the target of PRX's story pitch campaigns in the past.  I randomly chose 33K (75) of these headlines to be used as a training set for my models, and set aside the remaining 11K (25%) to be used as a test set.
                     
+                    <br><br><br>
 
+                     <h3 id="mod1">An Initial Model</h3>
+                     I first removed non-Alphanumeric characters with a simple Regex. I then used the NLTK package to tokenize the headlines, breaking them down into their constituent words. Stopwords (e.g., "and", "for", etc.) were removed and the remaining words were lemmatized to reduce them to their basic roots (e.g., "funds" to "fund") to facilitate identifying overlapping words. 
+                     <br><br>
+                    I took a very simple and traditional approach for NLP problems, which is to treat the headlines as a bag of words.  In bag of words, text is represented as a collection of its words, disregarding grammar and word order, but keeping multiplicity.  In my model, I collected both single words and bigrams (consecutive word pairs), and only the 1000 most frequent words/bigrams were kept.  Feature values were then calculated from the number of times each of these words/bigrams appeared in each headline. In other words, each headline was represented as an array of 1000 numbers containing word counts. <br><br>
 
-
+                    I trained a logistic regression model using the training set data, with 10-fold cross-validation to identify the best parameters for lasso regularization.  This model did a fantastic job of classifying the source of the headlines in the test set with an area under the Receiver Operating Characteristic (ROC) curve of 0.96 (accuracy of 88%).  Upon careful inspection of the parameters of the model, the top features included words like "Nintendo", "XBox", and "Twitter".  This makes sense as VentureBeat often publicizes news about popular tech related topics.However, these features highlight the lack of generability of this model for other startups wanting to publicize their own news.  
+                    <br><br>
+                       <div class="row">
+                      <center>
+                        <div class="col-sm-4" style="margin-top:10px">
+                              <img src="/static/img/AUC_mod1.png" height="300px" width="300px">
+                        </div>
+                        <div class="col-sm-8" style="margin-top:10px">
+                                <img src="/static/img/Params_Mod1.png" height="300px" width="400px">
+                        </div>
+                      </center>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="margin-top:2px">
+                            <center>
+                            <div class="caption">(Left) Area under the curve for this initial model. (Right) Some parameters for the model and their coefficient values.  </div>
+                             </center>
+                        </div>
+                    </div>  
+                    <br><br><br>
+                    <h3 id="mod2">A More Useful Model</h3>
+                    I decided to take a step back and build a more useful and general model for PRX.  I engineered 17 new features based on general content and style of the raw headling.  Here is a list of the 17 engineered features:
+                    <ul>
+                        <li>Does the headline contain monetary values?</li>
+                        <li>Does the headline contain parentheses, dashes, or ellipses?</li>
+                        <li>Does the headline contain a question mark?</li>
+                       
+                        <li>The number of words in the headline</li>
+                        <li>Does the headline contain a quote?</li>
+                        <li>The number of characters in the longest word</li>
+                        <li>Does the headline contain trademark or copyright symbols?</li>
+                        <li>Does the headline contain percentages?</li>
+                        <li>Does the headline contain '.com'?</li>
+                        
+                        <li>Is the headline in all capitalized letters?</li>
+                        <li>The number of articles in the headline</li>
+                        <li>The number of adjectives and adverbs in the headline</li>
+                        <li>The number of comparative and superlative words in the headline</li>
+                        <li>The number of acronyms in the headline</li>
+                        <li>Does the headline make any references to time?</li>
+                        <li>Does the headline contain ranking information?</li>
+                        
+                        <li>Does the headline begin with either Who, What, Where, When, Why, or How?</li>
+                    </ul>
+                    I also used a bag of words approach again, but this time I filtered out words that were not adjectives, adverbs, and verbs (using Stanford's part of speech tagger) so that specific company names and products would not be included. <br><br>
+                    What was remarkable was that this new model did almost just as well as the first model at classifying the source of the headlines in the test set with an area of the ROC curve of 0.92 (accuracy of 84%).   The top features for the model included words like "backed" and "funding", which are definitely topics that are relevant for PRX and it's clients. There were also some surprising findings and insights from the engineered features.  It's pretty well known in the journalism community that adding numbers to headlines can help grab attention. However, this model shows that actually not all numbers may be good.  Having ranking information appears to be a bad thing for a headline.  
+                    <div class="row">
+                      <center>
+                        <div class="col-sm-4" style="margin-top:10px">
+                              <img src="/static/img/AUC_mod_Comb.png" height="300px" width="300px">
+                        </div>
+                        <div class="col-sm-8" style="margin-top:10px">
+                                <img src="/static/img/Params_Mod_Comb.png" height="300px" width="400px">
+                        </div>
+                      </center>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="margin-top:2px">
+                            <center>
+                            <div class="caption">(Left) Area under the curve for this more general and useful model. (Right) Some parameters for the model and their coefficient values.  </div>
+                             </center>
+                        </div>
+                    </div>  
                 </div>
-                <div class="col-md-12">
-                    <h3 id="demo">Code Demo</h3>
-                   
-
-
-
-
+                <br><br><br><br>
+                 <div class="col-md-12">
+                    <h3 id="app">The Web App</h3>
+                    For my second deliverable to PRX, I created a Flask <a href="/">web app</a> that provides a score for a given headline as well as tailored feedback for improving the headline.  If you haven't already, please check it out!  I've pre-populated the input field with an actual headline that PRX was working on at the time of my project, but you can replace it with any headline you want.
+                    <br><br> 
+                    When a headline is submitted to the web app, it is used as input to the classifier.  The output is a score that reflects the predicted probability that the headline is a VentureBeat article.  Therefore, a score of 0% means that the headline is not engaging and that it is more like a Newswire headline, whereas a score of 100% indicates a headline that is more like a VentureBeat headline.
+                    <br><br>
+                    To provide suggestions for improvement of a specific headline, I took advantage of the fact that logistic regression coefficients are relatively easy to interpret.  Features with positive coefficients help increase a headline's score, whereas features with negative coefficients have the opposite effect. Therefore, I could simply suggest for the headline to include more of the features with positive coefficients and less of the features with negative coefficients. This was pretty straight forward for my engineered features as most of them were booleans (True or False). For the bag of adjective, adverb, and verb words from the model, I created a list of those words from my model that had negative coefficients.  If a headline included any of these words, it would provide the suggestion to replace that word to improve the score.  I didn't have enough time to do anything with the words that had positive coefficients.
+                    <br><br><br>
                 </div>
+                
                 <div class="col-md-12">
-                    <h3 id="summ">Summary</h3>
-                   
+                    <h3 id="summ">Conclusions</h3>
+                    With this project, I explored if we could leverage machine learning and data to optimize headlines for journalist engagement.  I provided PRX with two solid deliverables: (1) A classifier model that could predict with 88% accuracy if a headline is "engaging", and (2) a web app for PRX to get scores for a given headlines and tailored feedback for improving the score.   
+                    <br><br>
+                    I've only had a brief three weeks to work on this project, and there are definitely ways I would like to extend this body of work.  I made the assumption that we could improve headlines by making them more like VentureBeat headlines and less like Newswire headlines.  This was based on the observation that VentureBeat headlines do have more social media shares than ones from Newswire.  To make the model more general, it would have been better to have included business headlines from other publication sites that also have high numbers of social media shares.  
+                    <br><br>
+                    An alternative and potentially exciting direction for this project would be the personalization of headlines for the publication being targeted.  The current model I built for PRX could be used to identify best headlines for specifically targeting VentureBeat journalists.  Imagine if PRX created similar models for the NYTimes, Forbes, and every other publication site!  Journalists could begin to see PRX as a resource for making more data-driven decisions about what stories to cover.  I can't wait to see which direction PRX takes with this work. 
+                    <br><br>I just want to close out by thanking my contact from PRX, David Tran.  I've had an amazing time learning NLP and getting a chance to understand the PR industry a little bit better. 
+
+
                      <br><br><br>
                 </div>
                 <div class="col-md-12">
-                    <h3 id="links">Related Links</h3>
+                    <h3 id="link">Related Links</h3>
                     <ul>
+                        <li> <a href="https://www.prx.co" target="_blank">PRX's website</a></li>
                         <li> <a href="https://github.com/jontang/" target="_blank">Download the code</a></li>
+                         <li> <a href="http://www.score-my-headline.com" target="_blank">Try the demo</a></li>
                          
                     </ul>
+                    <br><br><br>
+                    <br><br><br>
+                    <br><br><br>
+                    <br><br><br>
+                    <br><br><br>
+                    <br><br><br>
                     <br><br><br>
                     <br><br><br>
                 </div>
@@ -130,6 +231,7 @@ Consulting Project for Insight Data Science 2017
         </div>
     </div>
 </div>
+
 
 
 <script src="https://d3js.org/d3.v2.js"></script>
