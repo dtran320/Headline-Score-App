@@ -1,4 +1,4 @@
- .chart-gauge
+ .gauge
  {
   width: 360px;
   margin: 10px auto;  
@@ -16,7 +16,7 @@
 }
 .chart-empty
 {
-  fill: #dedede;
+  fill: #fff;
 }
 
 .needle, .needle-center

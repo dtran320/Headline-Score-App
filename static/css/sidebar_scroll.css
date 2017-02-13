@@ -39,7 +39,7 @@
 }
 
 .sidebar-nav li {
-  line-height: 16px;
+  line-height: 15px;
   text-indent: 0em;
   padding-left: 0px;
   list-style-type: disc;
@@ -54,7 +54,7 @@
   color: #fff;
   display: block;
   text-decoration: none;
-  padding-left: 10px;
+  padding-left: 15px;
 }
 
 .sidebar-nav li a span:before {
@@ -88,14 +88,15 @@
 
 .sidebar-nav > .sidebar-brand {
   padding: 5px 0px 0px 10px;
-  height: 70px;
-  line-height: 24px;
+  height: 80px;
+  line-height: 23px;
   font-size: 18px;
   color: #ffb917;
 }
 
 .sidebar-nav > .sidebar-brand a {
   color: #FFBD17;
+
  
 }
 
