@@ -19,30 +19,32 @@ def index():
 def search():
   #Remove any newline characters 
   query = request.form['search_input'].replace('\n', ' ')
-  return redirect(url_for('search_results', query=query))
+  return redirect(url_for('score_results', query=query))
 
-@app.route('/search_results/<query>')
-def search_results(query):
-  # Get the score, the 
+#Route for returning results for a query
+@app.route('/score_results/<query>')
+def score_results(query):
+
+  # Get the score, the values for engineered features, 
+  #and a string of adjectives, adverbs, and verbs from the query.
   score, engfeats, aavs = predict_proba_boaav_eng(query)
+
+  #Get a list of suggestions for improvement based on values of engineered features
   msgs_eng_feats = get_messages(engfeats.values[0])
  
-  subject_array = ""
-  msgs_remove_words = get_words_to_remove(query)
+  #Get a list of suggestions to remove negative coefficient adjective, adverb, verb words
+  remove_words_suggestions = get_suggestions_to_remove_words(aavs)
   
-  msgs= msgs_remove_words + msgs_eng_feats 
-  #msgs= msgs_replace_words + msgs_remove_words + msgs_eng_feats 
+  #Append the two lists of suggestions
+  all_msgs= remove_words_suggestions + msgs_eng_feats 
+  
   sym = ""
   output = {'symbols': sym}  
-  return render_template("results.html", results=score, query=query, output=output, score=score, msgs=msgs)
+  return render_template("results.html", results=score, query=query, output=output, score=score, msgs=all_msgs)
 
 
    
-
-
-# This route will show a form to perform an AJAX request
-# jQuery is loaded to execute the request and update the
-# value of the operation
+# This route is for the about page with the blog description
 @app.route('/about')
 def about():
     return render_template('about.html')

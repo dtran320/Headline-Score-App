@@ -10,81 +10,35 @@ from nltk.tag import StanfordPOSTagger
 from nltk import word_tokenize
 import pandas as pd
 
-
+#Set the path to use NLTK stopwords
 nltk.data.path.append('./nltk_data/')
 
-#Check the results of tests
-def test_results(fcn_name, tests):
-    num_failed = 0
-    for test, expected in tests:
-        result = fcn_name(test) 
-        if result == expected:
-            status = 'OK'
-            status += ' (%s)' % result
-        else:
-            num_failed+=1
-            status = 'FAIL'
-            status += ' (%s)' % result
-        print(test + '\t\t\t' + status)
-        
-    print("____________")
-    print("Num Tests Failed: ", num_failed)
-
-#Checks to see if the subject contains any mention of US Currency
-def contains_currency(x):
-    dols = '$' in x
-    dol = 'dollar' in x
-    cent = ' cent' in x
-    usd = ' USD' in x
+#Returns True if raw_subject contains any mention of US Currency
+def contains_currency(raw_subject):
+    dols = '$' in raw_subject
+    dol = 'dollar' in raw_subject
+    cent = ' cent' in raw_subject
+    usd = ' USD' in raw_subject
     return any([dols, dol, cent, usd])
     
-currency_tests = [
-    ('10 cents ', True),
-    ('percent', False),
-    ('$100', True),
-    ('raised 5 million dollars in', True),
-    ('5 USD', True),
-   ]
-
-test_results(contains_currency, currency_tests)
-
-#Determines if there are colons, paretheses, dashes, or ellipses
+#Returns True if there are colons, paretheses, dashes, or ellipses in raw_subject
 def contains_symbol_separators(raw_subject):
 
     symbol_separators = re.compile('|'.join([
         r'^.*(\:)\s.*$',    # colons need to have a space after
-        r'^.*(\(.*\)).*$',  # parentheses.. includes things in parentheses not separated by spaces like al(oh)a
+        r'^.*(\(.*\)).*$',  # parentheses..
         r'^.*(\.{3,3}).*$', # ... must be three dots
         r'^.*\s(—)\s.*$',   # - must have spaces on either side
     ]))
     result = symbol_separators.match(raw_subject)
-    
     return(result is not None)
-    #if(result is not None):
-    #    symbol = [x for x in result.groups() if x is not None].pop()   
-    #    return(symbol)
-    #else:
-    #    return None 
-    
-symbol_tests = [
-    ('asdfasdf:', False),
-    ('asdf: asdfa', True),
-    ('(blah)', True),
-    ('a(blah)b', True),
-    ('blah...', True),
-    ('blah... ', True),
-    ('blah ...', True),
-    ('b—b', False),
-    ('b — b', True),
-   ]
 
-test_results(contains_symbol_separators, symbol_tests)
 
-#Determines if there's a question mark
+#Returns True if there's a question mark in raw_subject
 def contains_question(raw_subject):
     return '?' in raw_subject
 
-#Determines if there are double or single quotation marks
+#Returns True if there are double or single quotation marks in raw_subject
 def contains_quotes(raw_subject):
     
     symbol_separators = re.compile('|'.join([
@@ -94,50 +48,52 @@ def contains_quotes(raw_subject):
     result = symbol_separators.match(raw_subject)
     return(result is not None)
 
-#Determines if the subject contains copyright, trademark, etc symbols
+#Returns True if raw_subject contains copyright, trademark, etc symbols
 def contains_weird_symbols(raw_subject):
     r = '®' in raw_subject
     c = '©' in raw_subject
     tm = '™' in raw_subject   
     return any([r, c, tm])
 
-#Counts the number of words
+#Returns the number of words in raw_subject
 def find_num_words(raw_subject):
     return len(raw_subject.split())
 
-#Determines the longest word in length
+#Returns the length of the longest word in raw_subject
 def find_longest_word_length(raw_subject):
-    
-
     words = raw_subject.split() 
     lwords = list(next(gb(sorted(words, key=len, reverse=True), key=len))[1])
     return len(lwords[0])
 
-#Determines the length of the subject in total
+#Returns the number of characters in the raw_subject
 def find_charlength(raw_subject):
     return len(raw_subject)
 
-#Determines if '.com' is included in the subject
+#Returns True if '.com' is included in the raw_subject
 def contains_dotcom(raw_subject):
     return '.com' in raw_subject
 
-#Determines if the subject contains numbers
+#Returns True if the raw_subject contains numbers
 def contains_numbers(raw_subject):
     return bool(re.search(r'\d', raw_subject))
 
 
-
+#Returns the number of adjectives and adverbs in raw_subject
 def count_advjs(raw_subject):
-    #JJ: adjective #RB: adverb
+    #JJ: adjective 
+    #RB: adverb
     adj_count = 0
     for tag in nltk.pos_tag(raw_subject.split()):
         if(('JJ'==tag[1]) or ('RB'==tag[1])):
             adj_count += 1
     return adj_count
 
+#Returns the number of comparative and superlative words in raw_subject
 def count_comparative_superlative(raw_subject):
-    #JJR: adjective comparative.. better #RBR: adverb comparative
-    #JJS: adjective superlative.. better #RBS: adverb superlative
+    #JJR: adjective comparative  
+    #RBR: adverb comparative
+    #JJS: adjective superlative  
+    #RBS: adverb superlative
     adj_count = 0
     for tag in nltk.pos_tag(raw_subject.split()):
         if(('JJR'==tag[1]) or ('RBR'==tag[1]) or 
@@ -145,6 +101,7 @@ def count_comparative_superlative(raw_subject):
             adj_count += 1
     return adj_count
 
+#Returns the number of articles in raw_subject
 def count_articles(raw_subject):
     #DET
     art_count = 0
@@ -153,15 +110,14 @@ def count_articles(raw_subject):
             art_count += 1
     return art_count
 
-
-#Determines if the subject contains a percentile
+#Returns True if raw_subject contains a percentile
 def contains_percentile(raw_subject):
     p = '%' in raw_subject
     l = 'percentile' in raw_subject
     t = 'percent' in raw_subject   
     return any([p, l, t])
 
-#Checks if the subject contains a time element
+#Returns True if raw_subject contains a time element
 def contains_time(raw_subject):
     mo = 'month' in raw_subject
     da = 'day' in raw_subject
@@ -174,15 +130,15 @@ def contains_time(raw_subject):
     ce = 'century' in raw_subject 
     
     symbol_separators = re.compile('|'.join([
-        r'(^|.+\s)([1-3][0-9]{3})[:\?!\.]*(?:\s+|$)',        #4 digit    
+        r'(^|.+\s)([1-3][0-9]{3})[:\?!\.]*(?:\s+|$)', #4 digit    
     ]))
     result = symbol_separators.match(raw_subject.lower())
     year = (result is not None)
      
     return any([mo, da, wk, hr, se, ti, yr, de, ce, year])
 
+#Returns True if raw_subject contains ranking information
 def contains_ranking(raw_subject):
-
 
     symbol_separators = re.compile('|'.join([
         r'(^|.+\s)\d+(th)[:\?!\.]*(?:\s+|$)',      #th
@@ -194,51 +150,25 @@ def contains_ranking(raw_subject):
         r'(^|.+\s)(rankings)[:\?!\.]*(?:\s+|$)',    #rankings
         r'(^|.+\s)(rank)[:\?!\.]*(?:\s+|$)',      #rank 
         r'(^|.+\s)(ranks)[:\?!\.]*(?:\s+|$)',      #ranks
-       
-        
     ]))
     result = symbol_separators.match(raw_subject.lower())
     return(result is not None)
-#    if(result is not None):
-#        symbol = [x for x in result.groups() if x is not None].pop()     
-#        return(symbol)
-#    else:
-#        return None
-     
-ranking_tests = [
-    ('is 4th in line', True),
-    ('is 4th! Get in line', True),
-    ('4th seed', True),
-    ('july 4th', True),
-    ('july 4th?', True),
-    ('is 1st? In', True),
-    ('is 1st?a In', False),
-    ('going 1st to', True),
-    ('2nd in line', True),
-    ('is 33rd:', True),
-    ('is ranked 35', True),
-    ('ranked.', True),
-    ('and franks', False),
-    ('ranks', True),
-    ('is rank the', True),
-    ('ranking', True),
-    ('pranking', False),
-   ]
 
-test_results(contains_ranking, ranking_tests)
-
-
+#Returns the number of acronyms in raw_subject
 def count_acronyms(raw_subject):
     regex = r"\b[A-Z][a-zA-Z\.]*[A-Z]\b\.?"
     return len(re.findall(regex, raw_subject))
 
+#Returns True if raw_subject is all capitalized letters
 def is_all_caps(raw_subject):
     num = sum(1 for c in raw_subject if c.isupper())
     return(num == len(raw_subject.replace(" ","")))
 
+#Returns the number of capitalized letters in raw_subject
 def number_of_caps(raw_subject):
     return sum(1 for c in raw_subject if c.isupper())
 
+#Returns True if raw_subject begins with who, what, where, when, why, or how
 def starts_with_5WH(raw_subject):
     symbol_separators = re.compile('|'.join([
         r'^(who).+$',      # Who, whoever, etc
@@ -252,16 +182,13 @@ def starts_with_5WH(raw_subject):
     result = symbol_separators.match(raw_subject.lower())
     return(result is not None)
 
-# Takes a raw subject line as input, and returns a string 
+
+# Takes raw_subject as input, and returns a string 
 # where the words are converted to lower-case, 
 # non-letters and stopwords are removed,  
 # and then lemmatized using the wordnet lemmatizer
 def clean_subject( raw_subject ):
     
-    # Function to convert a raw subject to a string of words
-    # The input is a single string (a raw pitch subject), and 
-    # the output is a single string (a preprocessed pitch subject)
-  
     #Remove any numbers or letters in combination with numbers
     subject = ' '.join(s for s in raw_subject.split() if not any(c.isdigit() for c in s))
 
@@ -273,6 +200,7 @@ def clean_subject( raw_subject ):
     stops = set(stopwords.words("english"))                  
     meaningful_words = [w for w in words if not w in stops]   
     
+    # Lemmatize the words
     lmtzr = WordNetLemmatizer()
     lem_words = [lmtzr.lemmatize(w) for w in meaningful_words]   
     
@@ -281,14 +209,17 @@ def clean_subject( raw_subject ):
     return( " ".join( lem_words ))  
 
 
+# Function to return a single string containing all of the adjectives, adverbs, and verbs
+# from raw_subject using Stanford's POS Tagger
 def return_aavs(raw_subject):
-    jar = 'stanford-postagger-2014-08-27/stanford-postagger.jar'
-    model = 'stanford-postagger-2014-08-27/models/english-left3words-distsim.tagger'
+    jar = 'classifier_tools/stanford-postagger-2014-08-27/stanford-postagger.jar'
+    model = 'classifier_tools/stanford-postagger-2014-08-27/models/english-left3words-distsim.tagger'
     
-    #Added this to the heroku buildpack to update java to 1.8
+    #If using java 1.8, then you can use the more recent version of Stanford's POS Tagger
     #heroku buildpacks:set https://github.com/heroku/heroku-buildpack-jvm-common.git
-    #jar = 'stanford-postagger-2016-10-31/stanford-postagger.jar'
-    #model = 'stanford-postagger-2016-10-31/models/english-left3words-distsim.tagger'
+    #jar = 'classifier_tools/stanford-postagger-2016-10-31/stanford-postagger.jar'
+    #model = 'classifier_tools/stanford-postagger-2016-10-31/models/english-left3words-distsim.tagger'
+    
     pos_tagger = StanfordPOSTagger(model, jar, encoding='utf8')
 
     sents = []
@@ -297,6 +228,7 @@ def return_aavs(raw_subject):
         if (('JJ' in tag_tuple[1]) or ('RB' in tag_tuple[1]) or ('VB' in tag_tuple[1])):
             sents.append(tag_tuple[0])
     return(" ".join(sents))
+
 
 # Takes a raw subject line as input, and returns a string 
 # where the words are converted to lower-case, 
@@ -319,9 +251,11 @@ def extra_clean_subject( raw_subject ):
     stops = set(stopwords.words("english"))                  
     meaningful_words = [w for w in words if not w in stops]   
 
+    #Remove extra stop words
     extra_stops = set(['apple','android','usb'])
     meaningful_words2 = [w for w in meaningful_words if not w in extra_stops] 
     
+    #Lemmatize the words
     lmtzr = WordNetLemmatizer()
     lem_words = [lmtzr.lemmatize(w) for w in meaningful_words2]   
     
@@ -330,59 +264,11 @@ def extra_clean_subject( raw_subject ):
     return( " ".join( lem_words ))  
 
 
-
-
-# Creates and returns a tuple containing a dataframe containing 
-# word counts (columns) for each data point (row) 
-# and the count vectorizer, after creating pickle files for both.
-# A simple print out is also shown of the words identified with count
-def create_BOW_features(data, suffix_name, max_feats = 500, ngrams_range=(1,2), stop_wds=None):
-    print("Creating a bag of words of size ",max_feats)
-
-    # Initialize the "CountVectorizer" object
-    cv = CountVectorizer(analyzer = "word",   \
-                             tokenizer = None,    \
-                             preprocessor = None, \
-                             stop_words = stop_wds,   \
-                             ngram_range = ngrams_range, \
-                             max_features = max_feats) 
-    
-    # Fit the model and learns the vocabulary; 
-    # Transforms our training data into feature vectors. 
-    # The input to fit_transform should be a list ofstrings.
-    trainfeats = cv.fit_transform(data)
-
-    # Convert the result to an array
-    trainfeats = trainfeats.toarray()
-
-    # Sum up the counts of each vocabulary word
-    vocab = cv.get_feature_names()
-    dist = np.sum(trainfeats, axis=0)
-
-    # Save count vectorizer
-    joblib.dump(cv, 'cvect_'+suffix_name+'_n'+str(max_feats)+'_ngram'+str(ngrams_range).replace(' ','')+'.pkl') 
-
-    # Save the feature dataframe
-    df = pd.DataFrame(trainfeats)
-    df.columns = vocab
-    df.to_pickle('df_'+suffix_name+'_n'+str(max_feats)+'_ngram'+str(ngrams_range).replace(' ','')+'.pkl') 
-    
-    print("Created count vectorizer: cvect_"+suffix_name+'_n'+str(max_feats)+'_ngram'+str(ngrams_range).replace(' ','')+'.pkl') 
-    print("Created features df: df_"+suffix_name+'_n'+str(max_feats)+'_ngram'+str(ngrams_range).replace(' ','')+'.pkl\n') 
-    
-    # For each, print the vocabulary word and the number of times it 
-    # appears in the training set
-    print("Printing out counts for each word identified")
-    for tag, count in zip(vocab, dist):
-        print(tag, count)
-    
-    return df, cv
-
-
+# Return a pandas dataframe of values for the 18 engineered features from the 
+# model for raw_subject
 def get_eng_feats_df(raw_subject):
   
     engfeats_df = pd.DataFrame(columns=["subject"], data=[[raw_subject]])
-
     engfeats_df['cont_currency'] = engfeats_df['subject'].apply(lambda x: contains_currency(x))
     engfeats_df['cont_sym_separators'] = engfeats_df['subject'].apply(lambda x: contains_symbol_separators(x))
     engfeats_df['cont_question_mark'] = engfeats_df['subject'].apply(lambda x: contains_question(x))
@@ -404,51 +290,44 @@ def get_eng_feats_df(raw_subject):
     return engfeats_df
 
 
-
-def predict_boaav_eng(raw_subject):
-    
-    aavs = return_aavs(raw_subject)
-    subject = extra_clean_subject(aavs)
-    comb_model = pd.read_pickle('classifier_tools/combined_boaav_engfeats_mod.pkl') 
-    cvect_boaav = joblib.load('classiier_tools/cvect_stfd_adj_adv_verbs_n1000_ngram(1,1).pkl')  
-    boaav_feats = cvect_boaav.transform([subject])
-    vocab = cvect_boaav.get_feature_names()
-    
-    boaav_df = pd.DataFrame(boaav_feats.toarray())
-    boaav_df.columns = vocab
-    engfeats_df = get_eng_feats_df(raw_subject)
-    
-    df_combined_feats = pd.concat([engfeats_df, boaav_df], axis=1)
-    return comb_model.predict(df_combined_feats)[0]
-
+# Returns the predicted probability of being a positive case (headline from VentureBeat)
+# of raw_subject
 def predict_proba_boaav_eng(raw_subject):
     
+    #Get all of the adjectives, adverbs, and verbs
     aavs = return_aavs(raw_subject)
+
+    #Clean, lemmatize, and remove stop and extra stop words
     subject = extra_clean_subject(aavs)
-    comb_model = pd.read_pickle('classifier_tools/combined_boaav_engfeats_mod.pkl') 
+
+    #Use the count vectorizer to count the number of adjectives, adverbs, and verbs
+    #that were identified to be important by the classifier model
     cvect_boaav = joblib.load('classifier_tools/cvect_stfd_adj_adv_verbs_n1000_ngram(1,1).pkl')  
     boaav_feats = cvect_boaav.transform([subject])
     vocab = cvect_boaav.get_feature_names()
     
+    #Create a DataFrame with the Bag of Adjective, Adverb, and Verb word counts
     boaav_df = pd.DataFrame(boaav_feats.toarray())
     boaav_df.columns = vocab
+
+    #Get a DataFrame with the values for the 18 engineered features from the model
     engfeats_df = get_eng_feats_df(raw_subject)
     
+    #Combine the Bag of adverbs, adjectives, and verbs with the 18 engineered features
     df_combined_feats = pd.concat([engfeats_df, boaav_df], axis=1)
+
+    #Apply the model on the combined feature values of raw_subject to get the predicted probability score
+    comb_model = pd.read_pickle('classifier_tools/combined_boaav_engfeats_mod.pkl') 
     score = comb_model.predict_proba(df_combined_feats)[0][1]
+
+    #Return the score, the engineered feature values, and the string of adjectives, adverbs, verbs
     return score, engfeats_df, aavs
 
-def get_score_str(predicted_probability_double):
-    #p = predict_proba_boaav_eng(raw_subject)[0][1]*100
-    p = predicted_probability_double*100
-    return '{0:.{1}f}'.format(p, 1)
 
-
-
-
-
-def get_words_to_remove(subject):
-    remove_words = ['date', 'productive','emphasizes','reliable', 'promising',
+# This function returns an array of templated sentences that suggest to remove 
+# any words that were features with negative coefficients in the model.  
+def get_suggestions_to_remove_words(subject):
+    low_score_words = ['date', 'productive','emphasizes','reliable', 'promising',
                 'coach','meeting','healthy','proudly','significant','innovative',
                 'sustainable','enjoys','affordable','estimated','recognizes', 
                 'maintains','published','honored','participate','offered',      
@@ -477,83 +356,58 @@ def get_words_to_remove(subject):
                ]
     query = subject.lower()               
     msg = []
-    for word in remove_words:
+    for word in low_score_words:
         if word in query:
             message = "• Consider replacing the word '"+word+"'"
             msg.append(message)
     return msg 
 
 
-def get_words_to_replace(aavs):
-    msgs = []
-    for word in aavs.split(" "):
-        if len(word) > 0:
-
-            replace_word = ""
-            if word in 'change, commute, shift, convert, modify, exchange, transfer, alteration, alter, variety, interchange, vary, deepen, switch':
-                replace_word = "change"
-            if word in 'design, contrive':
-                replace_word = "plan"
-            if word in 'stop, stymy, stop, parry, jam, deflect, freeze, immobilise, halt, occlusion, obturate, impede, immobilize, barricade, hinder, bar, occlude':
-                replace_word = "block"
-            if word in 'disclose, unveil, expose, divulge, break, unwrap, reveal, discover, uncover':
-                replace_word = 'reveal'    
-            if word in 'rise, mature, produce, maturate, uprise, farm, originate, develop, acquire, raise, turn, arise':
-                replace_word = 'grew'   
-            if word in 'strike, decrease, diminish, drop, lessen':
-                replace_word = 'fell'
-            if word in 'beginning, origin, author, reference, reservoir, root, informant, seed, rootage':
-                replace_word = 'source'
-            if word in 'withdraw, take, hit, bump':
-                replace_word = 'removing'
-            if len(replace_word) > 0:
-                message = "• Consider replacing the word '"+word+"' with the word '"+replace_word+"'"
-                msgs.append(message)
-                 
-    return msgs
-
-
-#0 cont_currency          2.015749
-#1 cont_sym_separators    1.509125
-#2 cont_question_mark     0.147614
-#3 cont_quotes           -9.103116
-#4 cont_weird_symbols    -2.161241
-#5 num_words             -0.029475
-#6 longest_word_length   -0.181915
-#7 cont_dotcom           -1.380004
-#8 cont_percentile        0.346172
-#9 cont_time              0.202314
-#10 cont_ranking          -1.382012
-#11 num_articles           0.000000
-#12 num_advjs              1.285648
-#13 num_comps_supers       1.628176
-#14 num_acronyms          -0.195049
-#15 is_all_caps           -0.197197
-#16 starts_with_5WH        2.462860
+# Get a list of suggestions for improvement given an array of the 
+# engineered feature values. 
 def get_messages(engfeats_arr):
     msg = []
+    
+    #Contains Quotes: Negative Coefficient Feature
     if(engfeats_arr[3] == 1):
         msg.append("• Remove the quotations ")
+
+    #Starts with Who, What, Where, When, Why, How:  Positive Coefficient Feature
     if(engfeats_arr[16] == 0):
         msg.append("• Begin with Who, What, Where, When, Why, or How ")
+
+    #Contains Currency: Positive Coefficient Feature
     if(engfeats_arr[0] == 0):
         msg.append("• Include monetary values ($)")
+
+    #Contains copyright or trademark symbols: Negative Coefficient Feature
     if(engfeats_arr[4] == 1):
         msg.append("• Remove copyright or trademark symbols ")
+
+    #Contains parentheses, dashes, ellipses: Positive Coefficient Features
     if(engfeats_arr[1] == 0):
         msg.append("• Include parentheses, dashes, or ellipses ")
+
+    #If no adjectives or adverbs, suggest to use one: Positive Coefficient Feature
     if(engfeats_arr[12] == 0):
         msg.append("• Use more adjectives or adverbs ")
+
+    #If no comparative or superlative words, suggest to use one: Positive Coefficient Fature
     if(engfeats_arr[13] == 0):
         msg.append("• Use more superlatives ")
-    if(engfeats_arr[3] == 1):
-        msg.append("• Remove the quotations ")
+
+    #If contains '.com', remove it: Negative Coefficient
     if(engfeats_arr[7] == 1):
         msg.append("• Remove '.com' information ")
+
+    #If contains ranking information, remove it: Negative Coefficient Feature
     if(engfeats_arr[10] == 1):
         msg.append("• Remove ranking information")
+
+    #If does not contain percentage information, include it: Positive Coefficient Feature
     if(engfeats_arr[8] == 0):
         msg.append("• Include percentage values")    
+    #If all words are capitalized, suggest to downcase them: Negative Coefficient Feature
     if(engfeats_arr[15] == 1):
         msg.append("• Do not make all words capitalized ")
      
