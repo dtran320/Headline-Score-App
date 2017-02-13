@@ -409,8 +409,8 @@ def predict_boaav_eng(raw_subject):
     
     aavs = return_aavs(raw_subject)
     subject = extra_clean_subject(aavs)
-    comb_model = pd.read_pickle('combined_boaav_engfeats_mod.pkl') 
-    cvect_boaav = joblib.load('cvect_stfd_adj_adv_verbs_n1000_ngram(1,1).pkl')  
+    comb_model = pd.read_pickle('classifier_tools/combined_boaav_engfeats_mod.pkl') 
+    cvect_boaav = joblib.load('classiier_tools/cvect_stfd_adj_adv_verbs_n1000_ngram(1,1).pkl')  
     boaav_feats = cvect_boaav.transform([subject])
     vocab = cvect_boaav.get_feature_names()
     
@@ -425,8 +425,8 @@ def predict_proba_boaav_eng(raw_subject):
     
     aavs = return_aavs(raw_subject)
     subject = extra_clean_subject(aavs)
-    comb_model = pd.read_pickle('combined_boaav_engfeats_mod.pkl') 
-    cvect_boaav = joblib.load('cvect_stfd_adj_adv_verbs_n1000_ngram(1,1).pkl')  
+    comb_model = pd.read_pickle('classifier_tools/combined_boaav_engfeats_mod.pkl') 
+    cvect_boaav = joblib.load('classifier_tools/cvect_stfd_adj_adv_verbs_n1000_ngram(1,1).pkl')  
     boaav_feats = cvect_boaav.transform([subject])
     vocab = cvect_boaav.get_feature_names()
     
