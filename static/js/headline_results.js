@@ -7,7 +7,6 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     height, padRad, percToDeg, percToRad, chart_sl,
     percent, radius, sectionIndx, svg_cg, cg, totalPercent, width, svg_sl, sl;
 
-  // Initial Percentage on load
   percent = .0;
  
   sectionPerc = 1 / 2;
@@ -17,17 +16,16 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
   // Orientation of gauge:
   totalPercent = .75;
 
-
-  cg = d3.select('.gauge');
+  cg = d3.select('.chart-gauge');
   sl = d3.select('.suggestions-list');
 
 
   width = cg[0][0].offsetWidth; 
- 
+  console.log("width:"+width);
   height = 300;
   radius = Math.min(width, height) / 2;
   barWidth = 40;
- 
+  console.log(barWidth+69);
 
 
 
@@ -134,7 +132,8 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
       }
      
 
-     
+      console.log("Len: "+suggestions_list.length);
+      console.log("Array?: "+(suggestions_list instanceof Array));
       var bar = this.cg.selectAll(".bar")
       .data(suggestions_list)
       .enter().append("g")
@@ -143,7 +142,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
 
 
       bar.append("rect")
-      .attr("y", function(d,i) { return y(i)+30; })
+      .attr("y", function(d,i) { console.log("d,i"+d+' '+i); return y(i)+30; })
       .attr("height", 0)
       .attr("width", 600)
       .style("fill","#1a9850")
@@ -152,14 +151,14 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
         .duration(500)
         .attr("height", 38)
         .delay(function(d,i) { 
-          
+          console.log("D|i: "+i+" "+d);
           return (i+5)*500;
         });
         
       bar.append("text")
       .style("fill","#fff")
       .attr("x", 5)
-      .attr("y", function(d,i) { return y(i)+55; })
+      .attr("y", function(d,i) {console.log("d,i: "+d+' '+i); return y(i)+55; })
       .text(function(d) { return d; });
   
 
@@ -248,6 +247,9 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
   suggestions = new Suggestions(chart_sl);
 //  suggestions.showList(suggestions_list);
 
+ 
 
+
+ 
 
 })();

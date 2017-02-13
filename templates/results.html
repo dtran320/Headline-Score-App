@@ -1,34 +1,24 @@
 {% include "top.html" %}
-
-
- 
-
     <!-- Page Content -->
     <div class="container">
-
         <!-- Marketing Icons Section -->
         <div class="row">
             <div class="col-lg-12">
                 <br><br>
-                            <center><h2 style="margin-top:0px">"{{query}}"</h2>
-                     <div class="gauge"></div>
-                     <div class="suggestions-list"></div>
-                       
-                        </center>
-                       
+                    <center>
+                        <h2 style="margin-top:0px">"{{query}}"</h2>
+                        <div class="chart-gauge"></div>
+                        <div class="suggestions-list"></div>
+                    </center>        
             </div>
-            
-        </div>
-        <!-- /.row -->
-
-     
+        </div> 
     </div>
     <!-- /.container -->
     <script src="/static/js/headline_results.js"></script>
-     <script type="text/javascript">
+    <script type="text/javascript">
         needle.moveTo({{results}}); 
         suggestions.showList({{msgs|tojson}});
-      </script>
+    </script>
    
 
     <!-- jQuery -->
@@ -36,9 +26,5 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="/static/js/bootstrap.min.js"></script>
-
-   
-
 </body>
-
 </html>

@@ -1,30 +1,30 @@
- .gauge
- {
-  width: 360px;
-  margin: 10px auto;  
-  height: 230px;
-} 
-.suggestions-list
-{
-  width: 600px;
-  height: 400px;
-  margin: 0px auto  
-} 
-.chart-filled
-{
-  fill: steelblue;
-}
-.chart-empty
-{
-  fill: #fff;
-}
+   .chart-gauge
+   {
+    width: 360px;
+    margin: 10px auto;  
+    height: 230px;
+  } 
+  .suggestions-list
+  {
+    width: 600px;
+    height: 400px;
+    margin: 0px auto  
+  } 
+  .chart-filled
+  {
+    fill: steelblue;
+  }
+  .chart-empty
+  {
+    fill: #dedede;
+  }
+  
+  .needle, .needle-center
+  {
+    fill: #464A4F;
+  }
 
-.needle, .needle-center
-{
-  fill: #464A4F;
-}
-
-svg {
-  font: 22px sans-serif;
-  fill: #464A4F;
-}
+  svg {
+    font: 22px sans-serif;
+    fill: #464A4F;
+  }

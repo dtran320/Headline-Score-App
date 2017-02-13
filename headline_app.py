@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -37,9 +38,11 @@ def score_results(query):
   #Append the two lists of suggestions
   all_msgs= remove_words_suggestions + msgs_eng_feats 
   
+  print(all_msgs)
+  print(score)
   sym = ""
   output = {'symbols': sym}  
-  return render_template("results.html", results=score, query=query, msgs=all_msgs)
+  return render_template("results.html", results=score, query=query, output=output, score=score, msgs=all_msgs)
 
 
    
