@@ -7,27 +7,19 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     height, padRad, percToDeg, percToRad, chart_sl,
     percent, radius, sectionIndx, svg_cg, cg, totalPercent, width, svg_sl, sl;
 
-  percent = .0;
- 
+  
   sectionPerc = 1 / 2;
   padRad = 0.025;
   chartInset = 10;
+  totalPercent = .75;  // Orientation of gauge
 
-  // Orientation of gauge:
-  totalPercent = .75;
 
   cg = d3.select('.chart-gauge');
-
-
   width = cg[0][0].offsetWidth; 
-  
   height = 300;
-  radius = Math.min(width, height) / 2;
+  radius = 150;
   barWidth = 40;
   
-
-
-
   /*
     Utility methods 
   */
@@ -56,14 +48,11 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
   
   
     
-
+  //Add text to display the predicted score
   scoreText = chart_cg.append('text')
     .attr("x", -120) 
     .attr("y", 55)
     .style("font-size", "40px");
-
-  
-
 
   repaintGauge = function (perc) 
   {
@@ -89,81 +78,6 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     .text('Score: '+(100*perc).toFixed(1)+'%');
   }
 
-  var Suggestions = (function(){
-    function Suggestions(cg) {
-      this.cg = cg;
-    }
-
-    Suggestions.prototype.showList = function(suggestions_list) {
-      //this.cg.append('circle').attr('class', 'needle-center').attr('cx', 0).attr('cy', 0).attr('r', this.radius);
-      //return this.cg.append('path').attr('class', 'needle').attr('d', recalcPointerPos.call(this, 0));
-      var y = d3.scale.linear()
-        .domain([0,10])
-        .range([0,400]);
-
-
-      if(suggestions_list.length > 0){
-         this.cg.append('text')
-        .attr("x", 0) 
-        .attr("y", 20)
-        .style("font-size", "24px")
-        .style('opacity', 0) 
-        .style("fill", '#464A4F')
-        .text("Tailored Suggestions For Your Headline: ")
-        .transition()
-        .ease("quad-out")
-        .duration(500)
-        .style('opacity', 1) 
-        .delay(2000);
-      } else {
-        this.cg.append('text')
-        .attr("x", 0) 
-        .attr("y", 20)
-        .style("font-size", "24px")
-        .style('opacity', 0) 
-        .style("fill", '#464A4F')
-        .text("That's a pretty awesome headline! ")
-        .transition()
-        .ease("quad-out")
-        .duration(500)
-        .style('opacity', 1) 
-        .delay(2000);
-      }
-     
-
-     
-      var bar = this.cg.selectAll(".bar")
-      .data(suggestions_list)
-      .enter().append("g")
-      .attr("class", "bar"); 
-
-
-
-      bar.append("rect")
-      .attr("y", function(d,i) { return y(i)+30; })
-      .attr("height", 0)
-      .attr("width", 600)
-      .style("fill","#1a9850")
-      .transition()
-        .ease("quad-out")
-        .duration(500)
-        .attr("height", 38)
-        .delay(function(d,i) { 
-          return (i+5)*500;
-        });
-        
-      bar.append("text")
-      .style("fill","#fff")
-      .attr("x", 5)
-      .attr("y", function(d,i) { return y(i)+55; })
-      .text(function(d) { return d; });
-  
-
-    };
-
-    return Suggestions;
-
-  })();
 
 
   var Needle = (function() {
@@ -228,25 +142,93 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
 
   })();
 
+  //Create the needle and move to the 
   needle = new Needle(chart_cg);
   needle.render();
-  needle.moveTo(percent);
+  needle.moveTo(0.0);
   
 
+  //Create a list of suggestions 
   sl = d3.select('.suggestions-list');
   width_sl = sl[0][0].offsetWidth; 
   height_sl = sl[0][0].offsetHeight;
+
   // Create SVG element
   svg_sl = sl.append('svg').attr('width', width_sl).attr('height', height_sl);
+  
   // Add layer for the panel
   chart_sl = svg_sl.append('g');
+
+  var Suggestions = (function(){
+    function Suggestions(cg) {
+      this.cg = cg;
+    }
+
+    Suggestions.prototype.showList = function(suggestions_list) {
+      //Create custom linear d3 scale for determining height of text and bars
+      var y = d3.scale.linear()
+        .domain([0,10])
+        .range([0,400]);
+
+      //Append text based on if there are suggestions
+      if(suggestions_list.length > 0){
+         this.cg.append('text')
+        .attr("x", 0) 
+        .attr("y", 20)
+        .style("font-size", "24px")
+        .style('opacity', 0) 
+        .style("fill", '#464A4F')
+        .text("Tailored Suggestions For Your Headline: ")
+        .transition()
+        .ease("quad-out")
+        .duration(500)
+        .style('opacity', 1) 
+        .delay(2000);
+      } else {
+        this.cg.append('text')
+        .attr("x", 0) 
+        .attr("y", 20)
+        .style("font-size", "24px")
+        .style('opacity', 0) 
+        .style("fill", '#464A4F')
+        .text("That's a pretty awesome headline! ")
+        .transition()
+        .ease("quad-out")
+        .duration(500)
+        .style('opacity', 1) 
+        .delay(2000);
+      }
+       
+      //Create the rectangles for holding suggestions  
+      var bar = this.cg.selectAll(".bar")
+      .data(suggestions_list)
+      .enter().append("g")
+      .attr("class", "bar"); 
+
+      bar.append("rect")
+      .attr("y", function(d,i) { return y(i)+30; })
+      .attr("height", 0)
+      .attr("width", 600)
+      .style("fill","#1a9850")
+      .transition()
+        .ease("quad-out")
+        .duration(500)
+        .attr("height", 38)
+        .delay(function(d,i) { 
+          return (i+5)*500;
+        });
+        
+      //Create the suggestion text  
+      bar.append("text")
+      .style("fill","#fff")
+      .attr("x", 5)
+      .attr("y", function(d,i) { return y(i)+55; })
+      .text(function(d) { return d; });
+    };
+    return Suggestions;
+
+  })();
   
   suggestions = new Suggestions(chart_sl);
-//  suggestions.showList(suggestions_list);
-
- 
-
-
- 
 
 })();
