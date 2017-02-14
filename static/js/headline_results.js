@@ -16,9 +16,9 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
 
   cg = d3.select('.chart-gauge');
   width = cg[0][0].offsetWidth; 
-  height = 300;
-  radius = 150;
-  barWidth = 40;
+  height = 300;  
+  radius = 150;  //radius of the gauge
+  barWidth = 40; //width of the gauge bar
   
   /*
     Utility methods 
@@ -54,6 +54,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     .attr("y", 55)
     .style("font-size", "40px");
 
+  //Repaint the gauge layer
   repaintGauge = function (perc) 
   {
     var next_start = totalPercent;
@@ -72,6 +73,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     chart_cg.select(".chart-filled").attr('d', arc1);
     chart_cg.select(".chart-empty").attr('d', arc2);
    
+    //Add Score text to the gauge layer
     scoreText
     .transition().duration(1)
     .style("opacity", 1)
@@ -79,7 +81,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
   }
 
 
-
+  
   var Needle = (function() {
     /** 
       * Helper function that returns the `d` value
@@ -142,9 +144,10 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
 
   })();
 
-  //Create the needle and move to the 
+  //Create and render the needle.
   needle = new Needle(chart_cg);
   needle.render();
+  //Move initial position to 0 upon load
   needle.moveTo(0.0);
   
 
@@ -228,7 +231,7 @@ var barWidth, chart_cg, chartInset, degToRad, repaintGauge,
     return Suggestions;
 
   })();
-  
+  //Create the suggestion object from the panel
   suggestions = new Suggestions(chart_sl);
 
 })();

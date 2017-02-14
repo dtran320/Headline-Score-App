@@ -41,11 +41,11 @@ def contains_question(raw_subject):
 #Returns True if there are double or single quotation marks in raw_subject
 def contains_quotes(raw_subject):
     
-    symbol_separators = re.compile('|'.join([
+    quotes = re.compile('|'.join([
         r'(^|.+\s)(\'.+\').*$',  #single quotes: requires a space before first quotation mark
         r'(^|.+\s)(\".+\").*$',  #double quotes: requires a space before first quotation mark
     ]))
-    result = symbol_separators.match(raw_subject)
+    result = quotes.match(raw_subject)
     return(result is not None)
 
 #Returns True if raw_subject contains copyright, trademark, etc symbols
@@ -61,11 +61,14 @@ def find_num_words(raw_subject):
 
 #Returns the length of the longest word in raw_subject
 def find_longest_word_length(raw_subject):
-    words = raw_subject.split() 
-    lwords = list(next(gb(sorted(words, key=len, reverse=True), key=len))[1])
-    return len(lwords[0])
+    if len(raw_subject)==0:
+        return 0
+    else: 
+        words = raw_subject.split() 
+        lwords = list(next(gb(sorted(words, key=len, reverse=True), key=len))[1])
+        return len(lwords[0])
 
-#Returns the number of characters in the raw_subject
+#Returns the number of characters in the raw_subject including spaces
 def find_charlength(raw_subject):
     return len(raw_subject)
 
@@ -103,7 +106,6 @@ def count_comparative_superlative(raw_subject):
 
 #Returns the number of articles in raw_subject
 def count_articles(raw_subject):
-    #DET
     art_count = 0
     for tag in nltk.pos_tag(raw_subject.split()):
         if('DET'==tag[1]):
@@ -129,10 +131,10 @@ def contains_time(raw_subject):
     de = 'decade' in raw_subject
     ce = 'century' in raw_subject 
     
-    symbol_separators = re.compile('|'.join([
+    times = re.compile('|'.join([
         r'(^|.+\s)([1-3][0-9]{3})[:\?!\.]*(?:\s+|$)', #4 digit    
     ]))
-    result = symbol_separators.match(raw_subject.lower())
+    result = times.match(raw_subject.lower())
     year = (result is not None)
      
     return any([mo, da, wk, hr, se, ti, yr, de, ce, year])
@@ -140,7 +142,7 @@ def contains_time(raw_subject):
 #Returns True if raw_subject contains ranking information
 def contains_ranking(raw_subject):
 
-    symbol_separators = re.compile('|'.join([
+    ranking_info = re.compile('|'.join([
         r'(^|.+\s)\d+(th)[:\?!\.]*(?:\s+|$)',      #th
         r'(^|.+\s)\d+(st)[:\?!\.]*(?:\s+|$)',      #st
         r'(^|.+\s)\d+(nd)[:\?!\.]*(?:\s+|$)',      #nd
@@ -151,7 +153,7 @@ def contains_ranking(raw_subject):
         r'(^|.+\s)(rank)[:\?!\.]*(?:\s+|$)',      #rank 
         r'(^|.+\s)(ranks)[:\?!\.]*(?:\s+|$)',      #ranks
     ]))
-    result = symbol_separators.match(raw_subject.lower())
+    result = ranking_info.match(raw_subject.lower())
     return(result is not None)
 
 #Returns the number of acronyms in raw_subject
@@ -170,7 +172,7 @@ def number_of_caps(raw_subject):
 
 #Returns True if raw_subject begins with who, what, where, when, why, or how
 def starts_with_5WH(raw_subject):
-    symbol_separators = re.compile('|'.join([
+    w5h = re.compile('|'.join([
         r'^(who).+$',      # Who, whoever, etc
         r'^(what).+$',      # What, whatever, etc
         r'^(where).+$',      # Where
@@ -179,7 +181,7 @@ def starts_with_5WH(raw_subject):
         r'^(how).+$',      # How
        
     ]))
-    result = symbol_separators.match(raw_subject.lower())
+    result = w5h.match(raw_subject.lower())
     return(result is not None)
 
 
@@ -230,15 +232,14 @@ def return_aavs(raw_subject):
     return(" ".join(sents))
 
 
-# Takes a raw subject line as input, and returns a string 
-# where the words are converted to lower-case, 
-# non-letters and stopwords are removed,  
+# Takes a raw_subject line as input, and returns a string 
+# where letter and number combination words are removed,
+# words are converted to lower-case, 
+# non-letters and stopwords are removed, 
+# an extra custom set of stopwords are also removed, 
 # and then lemmatized using the wordnet lemmatizer
 def extra_clean_subject( raw_subject ):
     
-    # Function to convert a raw subject to a string of words
-    # The input is a single string (a raw pitch subject), and 
-    # the output is a single string (a preprocessed pitch subject)
     
     #Remove any numbers or letters in combination with numbers
     subject = ' '.join(s for s in raw_subject.split() if not any(c.isdigit() for c in s))
@@ -251,7 +252,7 @@ def extra_clean_subject( raw_subject ):
     stops = set(stopwords.words("english"))                  
     meaningful_words = [w for w in words if not w in stops]   
 
-    #Remove extra stop words
+    #Remove extra custom stop words
     extra_stops = set(['apple','android','usb'])
     meaningful_words2 = [w for w in meaningful_words if not w in extra_stops] 
     
@@ -290,8 +291,10 @@ def get_eng_feats_df(raw_subject):
     return engfeats_df
 
 
-# Returns the predicted probability of being a positive case (headline from VentureBeat)
-# of raw_subject
+# Returns a triple for raw_subject after running it through the classifier:
+# Triple 1: the predicted probability of being a positive case (headline from VentureBeat)
+# Triple 2: the dataframe containing values of raw_subject for the 18 engineered features
+# Triple 3: a string of adjectives, adverbs, and verbs
 def predict_proba_boaav_eng(raw_subject):
     
     #Get all of the adjectives, adverbs, and verbs
